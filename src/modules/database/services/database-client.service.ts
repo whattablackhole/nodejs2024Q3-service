@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DatabaseClientService {
-  storage = new Map<any, any>();
+  storage = new Map<string, any>();
 
   add(key, value) {
     this.storage.set(key, value);

@@ -12,7 +12,7 @@ import { FavoritesResponse } from 'src/models/dtos/favorites';
 @Controller('/')
 export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
-  @Get('/')
+  @Get()
   async getFavs(): Promise<FavoritesResponse> {
     return await this.favoritesService.favorites();
   }

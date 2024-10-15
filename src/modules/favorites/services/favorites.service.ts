@@ -1,16 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import { FavoritesResponse } from 'src/models/dtos/favorites';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { Album } from 'src/types/album';
 import { Artist } from 'src/types/artist';
-import { Favorites } from 'src/types/favorites';
 import { Track } from 'src/types/track';
 
 @Injectable()
 export class FavoritesService {
   constructor(private dbClient: DatabaseClientService) {}
-  
+
   async favorites(): Promise<FavoritesResponse> {
     let response = {
       tracks: this.dbClient

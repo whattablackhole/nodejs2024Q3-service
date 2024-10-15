@@ -36,8 +36,8 @@ export class TrackController {
   }
 
   @Post()
-  async createOne(@Body() createUserDto: CreateTrackDto): Promise<Track> {
-    return await this.trackService.createTrack(createUserDto);
+  async createOne(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
+    return await this.trackService.createTrack(createTrackDto);
   }
 
   @Put(':id')
