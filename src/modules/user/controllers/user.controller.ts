@@ -36,12 +36,12 @@ export class UserController {
   }
 
   @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+  async createOne(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.createUser(createUserDto);
   }
 
   @Put(':id')
-  async updateUser(
+  async updateOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
