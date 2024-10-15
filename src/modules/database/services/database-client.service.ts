@@ -14,7 +14,7 @@ export class DatabaseClientService {
   getAll(key) {
     let result = [];
     for (let [k, value] of this.storage.entries()) {
-      if (key === k.split(':')[0]) {
+      if (key === k.split(':').slice(0, -1).join("")) {
         result.push(value);
       }
     }

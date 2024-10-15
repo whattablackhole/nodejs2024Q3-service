@@ -29,7 +29,7 @@ import { DatabaseModule } from './modules/database/database.module';
         module: TrackModule,
       },
       {
-        path: 'favorites',
+        path: 'favs',
         module: FavoritesModule,
       },
     ]),
