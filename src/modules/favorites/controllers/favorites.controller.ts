@@ -20,22 +20,25 @@ export class FavoritesController {
   @Post('track/:id')
   async addFavTrack(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
-  ): Promise<string> {
-    return await this.favoritesService.addTrack(id);
+  ): Promise<{ message: string }> {
+    await this.favoritesService.addTrack(id);
+    return { message: 'Track was added to favorites successfuly' };
   }
 
   @Post('album/:id')
   async addFavAlbum(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
-  ): Promise<string> {
-    return await this.favoritesService.addAlbum(id);
+  ): Promise<{ message: string }> {
+    await this.favoritesService.addAlbum(id);
+    return { message: 'Album was added to favorites successfuly' };
   }
 
   @Post('artist/:id')
   async addFavArtist(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
-  ): Promise<string> {
-    return await this.favoritesService.addArtist(id);
+  ): Promise<{ message: string }> {
+    await this.favoritesService.addArtist(id);
+    return { message: 'Artist was added to favorites successfuly' };
   }
 
   @Delete('track/:id')

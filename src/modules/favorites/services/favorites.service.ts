@@ -24,34 +24,34 @@ export class FavoritesService {
     return Promise.resolve(response);
   }
 
-  async addTrack(id: string): Promise<string> {
+  async addTrack(id: string): Promise<void> {
     if (!this.dbClient.get(`track:${id}`)) {
       throw new HttpException("Track doesn't exist", 422);
     }
 
     this.dbClient.add(`favorites:track:${id}`, id);
 
-    return Promise.resolve('Track was added to favs successfuly');
+    return Promise.resolve();
   }
 
-  async addAlbum(id: string): Promise<string> {
+  async addAlbum(id: string): Promise<void> {
     if (!this.dbClient.get(`album:${id}`)) {
       throw new HttpException("Album doesn't exist", 422);
     }
 
     this.dbClient.add(`favorites:album:${id}`, id);
 
-    return Promise.resolve('Album was added to favorites successfuly');
+    return Promise.resolve();
   }
 
-  async addArtist(id: string): Promise<string> {
+  async addArtist(id: string): Promise<void> {
     if (!this.dbClient.get(`artist:${id}`)) {
       throw new HttpException("Artist doesn't exist", 422);
     }
 
     this.dbClient.add(`favorites:artist:${id}`, id);
 
-    return Promise.resolve('Artist was added to favorites successfuly');
+    return Promise.resolve();
   }
   async deleteArtist(id: string): Promise<void> {
     if (!this.dbClient.get(`favorites:artist:${id}`)) {
