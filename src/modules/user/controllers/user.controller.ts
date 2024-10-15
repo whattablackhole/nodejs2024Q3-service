@@ -1,9 +1,50 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { CreateUserDto, UpdateUserDto } from 'src/models/dtos/user';
+import { User } from 'src/types/user';
+import { UserService } from '../services/user.service';
 
 @Controller('/')
 export class UserController {
+  constructor(private userService: UserService) {}
+
   @Get()
-  findAll(): string {
-    return 'This action returns all users';
+  async findAll(): Promise<User[]> {
+    return await this.userService.users();
+  }
+
+  @Get(':id')
+  async getOne(
+    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
+  ): Promise<User> {
+    return await this.userService.user(id);
+  }
+
+  @Delete(':id')
+  async deleteOne(
+    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
+  ): Promise<void> {
+    return await this.userService.deleteUser(id);
+  }
+
+  @Post()
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.userService.createUser(createUserDto);
+  }
+
+  @Put(':id')
+  async updateUser(
+    @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return await this.userService.updateUser({ data: updateUserDto, id });
   }
 }

@@ -6,6 +6,7 @@ import { RouterModule } from '@nestjs/core/router';
 import { AlbumModule } from './modules/album/album.module';
 import { TrackModule } from './modules/track/track.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
+import { DatabaseModule } from './modules/database/database.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
     AlbumModule,
     TrackModule,
     FavoritesModule,
+    DatabaseModule,
     RouterModule.register([
       {
         path: 'user',
