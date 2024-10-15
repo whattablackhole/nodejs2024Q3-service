@@ -7,6 +7,7 @@ import { AlbumModule } from './modules/album/album.module';
 import { TrackModule } from './modules/track/track.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { DatabaseModule } from './modules/database/database.module';
+import { ArtistModule } from './modules/artist/artist.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseModule } from './modules/database/database.module';
     TrackModule,
     FavoritesModule,
     DatabaseModule,
+    ArtistModule,
     RouterModule.register([
       {
         path: 'user',
@@ -23,6 +25,10 @@ import { DatabaseModule } from './modules/database/database.module';
       {
         path: 'album',
         module: AlbumModule,
+      },
+      {
+        path: 'artist',
+        module: ArtistModule,
       },
       {
         path: 'track',
