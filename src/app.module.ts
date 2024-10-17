@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { RouterModule } from '@nestjs/core/router';
 import { AlbumModule } from './modules/album/album.module';
@@ -40,7 +38,7 @@ import { ArtistModule } from './modules/artist/artist.module';
       },
     ]),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

@@ -9,18 +9,29 @@ import {
   Post,
 } from '@nestjs/common';
 import { FavoritesService } from '../services/favorites.service';
-import { FavoritesResponse } from 'src/models/dtos/favorites';
+import { FavoritesResponseDto } from 'src/models/dtos/favorites';
 import {
   EntityNotFoundException,
   ServerErrorException,
   UnprocessableEntity,
 } from 'src/modules/common/exceptions/entity.exception';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('favs')
 @Controller('/')
 export class FavoritesController {
   constructor(private favoritesService: FavoritesService) {}
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiResponse({
+    status: 200,
+    description: 'The collection has been successfuly retrieved',
+    type: FavoritesResponseDto,
+  })
+  @ApiOperation({
+    summary: 'Retrive collection of favorite artists, albums and tracks',
+  })
   @Get()
-  async getFavs(): Promise<FavoritesResponse> {
+  async getFavs(): Promise<FavoritesResponseDto> {
     try {
       return await this.favoritesService.favorites();
     } catch {
@@ -28,6 +39,22 @@ export class FavoritesController {
     }
   }
 
+  @ApiResponse({ status: 422, description: 'The track is not processable' })
+  @ApiResponse({
+    status: 201,
+    description: 'The track has been successfully added from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Track id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. trackId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Add track to favorites by id' })
   @Post('track/:id')
   async addFavTrack(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
@@ -43,6 +70,22 @@ export class FavoritesController {
     }
   }
 
+  @ApiResponse({ status: 422, description: 'The album is not processable' })
+  @ApiResponse({
+    status: 201,
+    description: 'The album has been successfully added from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Album id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. albumId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Add album to favorites by id' })
   @Post('album/:id')
   async addFavAlbum(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
@@ -58,6 +101,22 @@ export class FavoritesController {
     }
   }
 
+  @ApiResponse({ status: 422, description: 'The artist is not processable' })
+  @ApiResponse({
+    status: 201,
+    description: 'The artist has been successfully added from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Artist id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. artistId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Add artist to favorites by id' })
   @Post('artist/:id')
   async addFavArtist(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
@@ -72,6 +131,23 @@ export class FavoritesController {
       throw new ServerErrorException();
     }
   }
+
+  @ApiResponse({ status: 404, description: 'Track not found' })
+  @ApiResponse({
+    status: 204,
+    description: 'The track has been successfully removed from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Track id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. trackId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Remove track from favorites by id' })
   @HttpCode(204)
   @Delete('track/:id')
   async deleteFavTrack(
@@ -86,6 +162,23 @@ export class FavoritesController {
       throw new ServerErrorException();
     }
   }
+
+  @ApiResponse({ status: 404, description: 'Album not found' })
+  @ApiResponse({
+    status: 204,
+    description: 'The album has been successfully removed from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Album id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. albumId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Remove album from favorites by id' })
   @HttpCode(204)
   @Delete('album/:id')
   async deleteFavAlbum(
@@ -100,6 +193,23 @@ export class FavoritesController {
       throw new ServerErrorException();
     }
   }
+
+  @ApiResponse({ status: 404, description: 'Artist not found' })
+  @ApiResponse({
+    status: 204,
+    description: 'The artist has been successfully removed from favorites',
+  })
+  @ApiResponse({ status: 500, description: 'Server error' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Artist id has to be in UUID format',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. artistId is invalid (not uuid)',
+  })
+  @ApiOperation({ summary: 'Remove artist from favorites by id' })
   @HttpCode(204)
   @Delete('artist/:id')
   async deleteFavArtist(

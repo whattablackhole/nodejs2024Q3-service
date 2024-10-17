@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { FavoritesResponse } from 'src/models/dtos/favorites';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import {
   EntityNotFoundException,
@@ -8,12 +7,13 @@ import {
 import { Album } from 'src/types/album';
 import { Artist } from 'src/types/artist';
 import { Track } from 'src/types/track';
+import { Favorites } from 'src/types/favorites';
 
 @Injectable()
 export class FavoritesService {
   constructor(private dbClient: DatabaseClientService) {}
 
-  async favorites(): Promise<FavoritesResponse> {
+  async favorites(): Promise<Favorites> {
     const response = {
       tracks: this.dbClient
         .getAll(`favorites:track`)
