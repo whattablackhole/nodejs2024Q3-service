@@ -29,7 +29,19 @@ async function bootstrap() {
 
   SwaggerModule.setup('doc', app, document);
 
-  const yamlString = yaml.dump(document);
+  const rearengedDocument = {
+    openapi: document.openapi,
+    info: document.info,
+    servers: document.servers,
+    tags: document.tags,
+    components: document.components,
+    security: document.security,
+    paths: document.paths,
+    externalDocs: document.externalDocs,
+    ...document
+  };
+
+  const yamlString = yaml.dump(rearengedDocument);
 
   await writeFile('doc/swagger.yaml', yamlString);
 
