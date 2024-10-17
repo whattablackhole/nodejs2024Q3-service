@@ -1,12 +1,14 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { User } from 'src/types/user';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 export class CreateUserDto {
-  @MinLength(5)
+  @IsString()
+  @IsNotEmpty()
   login: string;
 
-  @MinLength(5)
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
@@ -14,16 +16,21 @@ export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
   oldPassword: string;
-  @MinLength(5)
+  @IsString()
+  @IsNotEmpty()
   newPassword: string;
 }
 
-
 export class UserDto implements User {
+  @Expose()
   id: string;
+  @Expose()
   createdAt: number;
+  @Expose()
   login: string;
+  @Expose()
   updatedAt: number;
+  @Expose()
   version: number;
   @Exclude()
   password: string;

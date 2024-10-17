@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -11,6 +13,10 @@ import {
 import { Artist } from 'src/types/artist';
 import { ArtistService } from '../services/artist.service';
 import { CreateArtistDto, UpdateArtistDto } from 'src/models/dtos/artist';
+import {
+  EntityNotFoundException,
+  ServerErrorException,
+} from 'src/modules/common/exceptions/entity.exception';
 
 @Controller('/')
 export class ArtistController {
@@ -25,19 +31,41 @@ export class ArtistController {
   async getOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<Artist> {
-    return await this.artistService.artist(id);
+    try {
+      return await this.artistService.artist(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async deleteOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
-    return await this.artistService.deleteArtist(id);
+    try {
+      return await this.artistService.deleteArtist(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Post()
   async createOne(@Body() createArtistDto: CreateArtistDto): Promise<Artist> {
-    return await this.artistService.createArtist(createArtistDto);
+    try {
+      return await this.artistService.createArtist(createArtistDto);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Put(':id')
@@ -45,6 +73,13 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
     @Body() updateUserDto: UpdateArtistDto,
   ): Promise<Artist> {
-    return await this.artistService.updateArtist({ data: updateUserDto, id });
+    try {
+      return await this.artistService.updateArtist({ data: updateUserDto, id });
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 }

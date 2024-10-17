@@ -1,7 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateTrackDto, UpdateTrackDto } from 'src/models/dtos/track';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
+import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 import { Track } from 'src/types/track';
 
 @Injectable()
@@ -12,7 +13,7 @@ export class TrackService {
     const track = this.dbClient.get(`track:${id}`);
 
     if (!track) {
-      throw new HttpException('Track not found', 404);
+      throw new EntityNotFoundException('Track');
     }
 
     return Promise.resolve(track);
@@ -42,7 +43,7 @@ export class TrackService {
     let track = this.dbClient.get(`track:${id}`) as Track | null;
 
     if (!track) {
-      throw new HttpException('Track not found', 404);
+      throw new EntityNotFoundException('Track');
     }
 
     track = {
@@ -59,8 +60,10 @@ export class TrackService {
     const result = this.dbClient.delete(`track:${id}`);
 
     if (!result) {
-      throw new HttpException('Track not found', 404);
+      throw new EntityNotFoundException('Track');
     }
+
+    this.dbClient.delete(`favorites:track:${id}`);
 
     return Promise.resolve();
   }

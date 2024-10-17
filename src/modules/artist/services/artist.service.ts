@@ -1,8 +1,9 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateArtistDto, UpdateArtistDto } from 'src/models/dtos/artist';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { Artist } from 'src/types/artist';
+import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 
 @Injectable()
 export class ArtistService {
@@ -12,7 +13,7 @@ export class ArtistService {
     const artist = this.dbClient.get(`artist:${id}`);
 
     if (!artist) {
-      throw new HttpException('Artist not found', 404);
+      throw new EntityNotFoundException('Artist');
     }
 
     return Promise.resolve(artist);
@@ -42,7 +43,7 @@ export class ArtistService {
     let artist = this.dbClient.get(`artist:${id}`) as Artist | null;
 
     if (!artist) {
-      throw new HttpException('Artist not found', 404);
+      throw new EntityNotFoundException('Artist');
     }
 
     artist = {
@@ -59,8 +60,28 @@ export class ArtistService {
     const result = this.dbClient.delete(`artist:${id}`);
 
     if (!result) {
-      throw new HttpException('Artist not found', 404);
+      throw new EntityNotFoundException('Artist');
     }
+
+    this.dbClient.delete(`favorites:artist:${id}`);
+
+    const tracks = this.dbClient.getAll(`track`, {
+      where: { artistId: id },
+    });
+
+    tracks.forEach((t) => {
+      t.artistId = null;
+      this.dbClient.put(`track:${t.id}`, t);
+    });
+
+    const albums = this.dbClient.getAll(`album`, {
+      where: { artistId: id },
+    });
+
+    albums.forEach((a) => {
+      a.artistId = null;
+      this.dbClient.put(`track:${a.id}`, a);
+    });
 
     return Promise.resolve();
   }

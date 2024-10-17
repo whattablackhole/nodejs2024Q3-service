@@ -1,6 +1,10 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FavoritesResponse } from 'src/models/dtos/favorites';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
+import {
+  EntityNotFoundException,
+  UnprocessableEntity,
+} from 'src/modules/common/exceptions/entity.exception';
 import { Album } from 'src/types/album';
 import { Artist } from 'src/types/artist';
 import { Track } from 'src/types/track';
@@ -10,7 +14,7 @@ export class FavoritesService {
   constructor(private dbClient: DatabaseClientService) {}
 
   async favorites(): Promise<FavoritesResponse> {
-    let response = {
+    const response = {
       tracks: this.dbClient
         .getAll(`favorites:track`)
         .map((id) => this.dbClient.get(`track:${id}`)) as Track[],
@@ -26,7 +30,7 @@ export class FavoritesService {
 
   async addTrack(id: string): Promise<void> {
     if (!this.dbClient.get(`track:${id}`)) {
-      throw new HttpException("Track doesn't exist", 422);
+      throw new UnprocessableEntity('Provided entity data is not processable');
     }
 
     this.dbClient.add(`favorites:track:${id}`, id);
@@ -36,7 +40,7 @@ export class FavoritesService {
 
   async addAlbum(id: string): Promise<void> {
     if (!this.dbClient.get(`album:${id}`)) {
-      throw new HttpException("Album doesn't exist", 422);
+      throw new UnprocessableEntity('Provided entity data is not processable');
     }
 
     this.dbClient.add(`favorites:album:${id}`, id);
@@ -46,7 +50,7 @@ export class FavoritesService {
 
   async addArtist(id: string): Promise<void> {
     if (!this.dbClient.get(`artist:${id}`)) {
-      throw new HttpException("Artist doesn't exist", 422);
+      throw new UnprocessableEntity('Provided entity data is not processable');
     }
 
     this.dbClient.add(`favorites:artist:${id}`, id);
@@ -55,7 +59,7 @@ export class FavoritesService {
   }
   async deleteArtist(id: string): Promise<void> {
     if (!this.dbClient.get(`favorites:artist:${id}`)) {
-      throw new HttpException("Artist doesn't exist in favorites", 404);
+      throw new EntityNotFoundException('Favorite artist');
     }
 
     this.dbClient.delete(`favorites:artist:${id}`);
@@ -64,7 +68,7 @@ export class FavoritesService {
   }
   async deleteTrack(id: string): Promise<void> {
     if (!this.dbClient.get(`favorites:track:${id}`)) {
-      throw new HttpException("Track doesn't exist in favorites", 404);
+      throw new EntityNotFoundException('Favorite track');
     }
 
     this.dbClient.delete(`favorites:track:${id}`);
@@ -74,7 +78,7 @@ export class FavoritesService {
 
   async deleteAlbum(id: string): Promise<void> {
     if (!this.dbClient.get(`favorites:album:${id}`)) {
-      throw new HttpException("Album doesn't exist in favorites", 404);
+      throw new EntityNotFoundException('Favorite album');
     }
 
     this.dbClient.delete(`favorites:album:${id}`);

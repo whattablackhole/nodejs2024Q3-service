@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -11,6 +13,10 @@ import {
 import { AlbumService } from '../services/album.service';
 import { CreateAlbumDto, UpdateAlbumDto } from 'src/models/dtos/album';
 import { Album } from 'src/types/album';
+import {
+  EntityNotFoundException,
+  ServerErrorException,
+} from 'src/modules/common/exceptions/entity.exception';
 
 @Controller('/')
 export class AlbumController {
@@ -18,26 +24,51 @@ export class AlbumController {
 
   @Get()
   async findAll(): Promise<Album[]> {
-    return await this.albumService.albums();
+    try {
+      return await this.albumService.albums();
+    } catch {
+      throw new ServerErrorException();
+    }
   }
 
   @Get(':id')
   async getOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<Album> {
-    return await this.albumService.album(id);
+    try {
+      return await this.albumService.album(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
-
+  @HttpCode(204)
   @Delete(':id')
   async deleteOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
-    return await this.albumService.deleteAlbum(id);
+    try {
+      return await this.albumService.deleteAlbum(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Post()
   async createOne(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
-    return await this.albumService.createAlbum(createAlbumDto);
+    try {
+      return await this.albumService.createAlbum(createAlbumDto);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Put(':id')
@@ -45,6 +76,13 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ): Promise<Album> {
-    return await this.albumService.updateAlbum({ data: updateAlbumDto, id });
+    try {
+      return await this.albumService.updateAlbum({ data: updateAlbumDto, id });
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 }

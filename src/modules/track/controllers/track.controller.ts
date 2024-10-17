@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -11,6 +13,10 @@ import {
 import { TrackService } from '../services/track.service';
 import { Track } from 'src/types/track';
 import { CreateTrackDto, UpdateTrackDto } from 'src/models/dtos/track';
+import {
+  EntityNotFoundException,
+  ServerErrorException,
+} from 'src/modules/common/exceptions/entity.exception';
 
 @Controller('/')
 export class TrackController {
@@ -18,26 +24,51 @@ export class TrackController {
 
   @Get()
   async findAll(): Promise<Track[]> {
-    return await this.trackService.tracks();
+    try {
+      return await this.trackService.tracks();
+    } catch {
+      throw new ServerErrorException();
+    }
   }
 
   @Get(':id')
   async getOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<Track> {
-    return await this.trackService.track(id);
+    try {
+      return await this.trackService.track(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
-
+  @HttpCode(204)
   @Delete(':id')
   async deleteOne(
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
-    return await this.trackService.deleteTrack(id);
+    try {
+      return await this.trackService.deleteTrack(id);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Post()
   async createOne(@Body() createTrackDto: CreateTrackDto): Promise<Track> {
-    return await this.trackService.createTrack(createTrackDto);
+    try {
+      return await this.trackService.createTrack(createTrackDto);
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 
   @Put(':id')
@@ -45,6 +76,13 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
     @Body() updateUserDto: UpdateTrackDto,
   ): Promise<Track> {
-    return await this.trackService.updateTrack({ data: updateUserDto, id });
+    try {
+      return await this.trackService.updateTrack({ data: updateUserDto, id });
+    } catch (err) {
+      if (err instanceof EntityNotFoundException) {
+        throw new HttpException(err.message, 404);
+      }
+      throw new ServerErrorException();
+    }
   }
 }

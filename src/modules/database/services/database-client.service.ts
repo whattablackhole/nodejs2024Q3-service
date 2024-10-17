@@ -11,11 +11,28 @@ export class DatabaseClientService {
   get(key) {
     return this.storage.get(key);
   }
-  getAll(key) {
-    let result = [];
-    for (let [k, value] of this.storage.entries()) {
-      if (key === k.split(':').slice(0, -1).join("")) {
-        result.push(value);
+  getAll(
+    key,
+    filter?: {
+      where: { [K in keyof unknown]?: unknown[K] };
+    },
+  ) {
+    const result = [];
+    for (const [k, value] of this.storage.entries()) {
+      if (key === k.split(':').slice(0, -1).join(':')) {
+        if (
+          !filter ||
+          Object.entries(filter).every((entry) => {
+            if (entry[0] === 'where') {
+              return Object.entries(entry[1]).every(([k, v]) => {
+                return v === value[k];
+              });
+            }
+            return true;
+          })
+        ) {
+          result.push(value);
+        }
       }
     }
     return result;
