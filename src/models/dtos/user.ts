@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { User } from 'src/types/user';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
@@ -73,7 +73,8 @@ export class UserDto implements User {
       'Timestamp when the user was created, in milliseconds since epoch',
     example: 1729182335190,
   })
-  createdAt: number;
+  @Transform(({ value }) => value.getTime())
+  createdAt: Date;
 
   @Expose()
   @ApiProperty({
@@ -88,7 +89,8 @@ export class UserDto implements User {
       'Timestamp when the user was last updated, in milliseconds since epoch',
     example: 1729182335190,
   })
-  updatedAt: number;
+  @Transform(({ value }) => value.getTime())
+  updatedAt: Date;
 
   @Expose()
   @ApiProperty({

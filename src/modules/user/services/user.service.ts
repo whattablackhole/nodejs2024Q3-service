@@ -1,52 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import { CreateUserDto, UpdateUserDto } from 'src/models/dtos/user';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 import { User } from 'src/types/user';
 import { PasswordMismatchException } from '../exceptions/user.exception';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private dbClient: DatabaseClientService) {}
 
-  async user(id: string): Promise<User> {
-    const user = this.dbClient.get(`user:${id}`);
+  async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
+    const user = await this.dbClient.user.findUnique({
+      where: userWhereUniqueInput,
+    });
 
     if (!user) {
       throw new EntityNotFoundException('User');
     }
 
-    return Promise.resolve(user);
+    return user;
   }
 
   async users(): Promise<User[]> {
-    return Promise.resolve(this.dbClient.getAll(`user`));
+    return await this.dbClient.user.findMany();
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const user: User = {
-      createdAt: new Date().getTime(),
-      id: randomUUID(),
+    const user: Prisma.UserCreateInput = {
       login: createUserDto.login,
       password: createUserDto.password,
-      updatedAt: new Date().getTime(),
       version: 1,
     };
 
-    this.dbClient.add(`user:${user.id}`, user);
-
-    return Promise.resolve(user);
+    return await this.dbClient.user.create({
+      data: user,
+    });
   }
 
   async updateUser({
     data,
-    id,
+    where,
   }: {
     data: UpdateUserDto;
-    id: string;
+    where: Prisma.UserWhereUniqueInput;
   }): Promise<User> {
-    const user = this.dbClient.get(`user:${id}`) as User | null;
+    const user = await this.dbClient.user.findUnique({
+      where: where,
+      select: { password: true, version: true },
+    });
 
     if (!user) {
       throw new EntityNotFoundException('User');
@@ -56,21 +58,29 @@ export class UserService {
       throw new PasswordMismatchException();
     }
 
-    user.password = data.newPassword;
-    user.version = user.version + 1;
-    user.updatedAt = new Date().getTime();
-    this.dbClient.put(`user:${id}`, user);
-
-    return user;
+    return await this.dbClient.user.update({
+      where: where,
+      data: {
+        password: data.newPassword,
+        version: { increment: 1 },
+        updatedAt: new Date(),
+      },
+    });
   }
 
-  async deleteUser(id: string): Promise<void> {
-    const result = this.dbClient.delete(`user:${id}`);
-
-    if (!result) {
-      throw new EntityNotFoundException('User');
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<void> {
+    try {
+      await this.dbClient.user.delete({
+        where,
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new EntityNotFoundException('User');
+      }
+      throw error;
     }
-
-    return Promise.resolve();
   }
 }

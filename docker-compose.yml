@@ -1,0 +1,12 @@
+services:
+  postgres:
+    build: 
+      dockerfile: Dockerfile.db
+    volumes:
+      - musiclibdb:/var/lib/postgresql/data
+    ports:
+      - "5444:5432"
+    restart: unless-stopped
+
+volumes:
+  musiclibdb:

@@ -65,7 +65,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<UserDto> {
     try {
-      const user = await this.userService.user(id);
+      const user = await this.userService.user({ id });
       return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
@@ -92,7 +92,7 @@ export class UserController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
     try {
-      return await this.userService.deleteUser(id);
+      return await this.userService.deleteUser({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -144,7 +144,7 @@ export class UserController {
     try {
       const user = await this.userService.updateUser({
         data: updateUserDto,
-        id,
+        where: { id },
       });
       return plainToInstance(UserDto, user, { excludeExtraneousValues: true });
     } catch (err) {

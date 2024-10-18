@@ -16,7 +16,8 @@ components:
           description: Unique identifier of the user
           example: 23c205ce-f1e9-4bae-9e6a-c913fe15a29a
         createdAt:
-          type: number
+          format: date-time
+          type: string
           description: Timestamp when the user was created, in milliseconds since epoch
           example: 1729182335190
         login:
@@ -24,7 +25,8 @@ components:
           description: The login name of the user
           example: Pupkin
         updatedAt:
-          type: number
+          format: date-time
+          type: string
           description: >-
             Timestamp when the user was last updated, in milliseconds since
             epoch
