@@ -71,7 +71,7 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<TrackDto> {
     try {
-      return await this.trackService.track(id);
+      return await this.trackService.track({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -102,7 +102,7 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
     try {
-      return await this.trackService.deleteTrack(id);
+      return await this.trackService.deleteTrack({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -155,7 +155,10 @@ export class TrackController {
     @Body() updateUserDto: UpdateTrackDto,
   ): Promise<TrackDto> {
     try {
-      return await this.trackService.updateTrack({ data: updateUserDto, id });
+      return await this.trackService.updateTrack({
+        data: updateUserDto,
+        where: { id },
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
