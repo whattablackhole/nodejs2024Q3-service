@@ -67,7 +67,7 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<ArtistDto> {
     try {
-      return await this.artistService.artist(id);
+      return await this.artistService.artist({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -98,7 +98,7 @@ export class ArtistController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
     try {
-      return await this.artistService.deleteArtist(id);
+      return await this.artistService.deleteArtist({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -154,7 +154,10 @@ export class ArtistController {
     @Body() updateUserDto: UpdateArtistDto,
   ): Promise<ArtistDto> {
     try {
-      return await this.artistService.updateArtist({ data: updateUserDto, id });
+      return await this.artistService.updateArtist({
+        data: updateUserDto,
+        where: { id },
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);

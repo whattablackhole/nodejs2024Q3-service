@@ -38,7 +38,7 @@ async function bootstrap() {
     security: document.security,
     paths: document.paths,
     externalDocs: document.externalDocs,
-    ...document
+    ...document,
   };
 
   const yamlString = yaml.dump(rearengedDocument);
