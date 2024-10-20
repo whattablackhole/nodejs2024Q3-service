@@ -72,7 +72,7 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<AlbumDto> {
     try {
-      return await this.albumService.album(id);
+      return await this.albumService.album({id});
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -103,7 +103,7 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
     try {
-      return await this.albumService.deleteAlbum(id);
+      return await this.albumService.deleteAlbum({id});
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
@@ -157,7 +157,7 @@ export class AlbumController {
     @Body() updateAlbumDto: UpdateAlbumDto,
   ): Promise<AlbumDto> {
     try {
-      return await this.albumService.updateAlbum({ data: updateAlbumDto, id });
+      return await this.albumService.updateAlbum({ data: updateAlbumDto, where: {id} });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);

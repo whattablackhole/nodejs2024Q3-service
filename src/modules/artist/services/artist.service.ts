@@ -1,88 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import { CreateArtistDto, UpdateArtistDto } from 'src/models/dtos/artist';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { Artist } from 'src/types/artist';
 import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ArtistService {
   constructor(private dbClient: DatabaseClientService) {}
 
-  async artist(id: string): Promise<Artist> {
-    const artist = this.dbClient.get(`artist:${id}`);
+  async artist(where: Prisma.ArtistWhereUniqueInput): Promise<Artist> {
+    const artist = await this.dbClient.artist.findUnique({ where });
 
     if (!artist) {
       throw new EntityNotFoundException('Artist');
     }
-
-    return Promise.resolve(artist);
-  }
-
-  async artists(): Promise<Artist[]> {
-    return Promise.resolve(this.dbClient.getAll(`artist`));
-  }
-
-  async createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
-    const artist: Artist = {
-      id: randomUUID(),
-      ...createArtistDto,
-    };
-    this.dbClient.add(`artist:${artist.id}`, artist);
-
-    return Promise.resolve(artist);
-  }
-
-  async updateArtist({
-    data,
-    id,
-  }: {
-    data: UpdateArtistDto;
-    id: string;
-  }): Promise<Artist> {
-    let artist = this.dbClient.get(`artist:${id}`) as Artist | null;
-
-    if (!artist) {
-      throw new EntityNotFoundException('Artist');
-    }
-
-    artist = {
-      id: artist.id,
-      ...data,
-    };
-
-    this.dbClient.put(`artist:${id}`, artist);
 
     return artist;
   }
 
-  async deleteArtist(id: string): Promise<void> {
-    const result = this.dbClient.delete(`artist:${id}`);
+  async artists(): Promise<Artist[]> {
+    return await this.dbClient.artist.findMany();
+  }
 
-    if (!result) {
-      throw new EntityNotFoundException('Artist');
+  async createArtist(createArtistDto: CreateArtistDto): Promise<Artist> {
+    try {
+      return await this.dbClient.artist.create({ data: createArtistDto });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new EntityNotFoundException('Artist');
+      }
+      throw error;
     }
+  }
 
-    this.dbClient.delete(`favorites:artist:${id}`);
+  async updateArtist({
+    data,
+    where,
+  }: {
+    data: UpdateArtistDto;
+    where: Prisma.ArtistWhereUniqueInput;
+  }): Promise<Artist> {
+    try {
+      return await this.dbClient.artist.update({ where, data });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new EntityNotFoundException('Artist');
+      }
+      throw error;
+    }
+  }
 
-    const tracks = this.dbClient.getAll(`track`, {
-      where: { artistId: id },
-    });
-
-    tracks.forEach((t) => {
-      t.artistId = null;
-      this.dbClient.put(`track:${t.id}`, t);
-    });
-
-    const albums = this.dbClient.getAll(`album`, {
-      where: { artistId: id },
-    });
-
-    albums.forEach((a) => {
-      a.artistId = null;
-      this.dbClient.put(`track:${a.id}`, a);
-    });
-
-    return Promise.resolve();
+  async deleteArtist(where: Prisma.ArtistWhereUniqueInput): Promise<void> {
+    try {
+      await this.dbClient.artist.delete({ where });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new EntityNotFoundException('Artist');
+      }
+      throw error;
+    }
   }
 }
