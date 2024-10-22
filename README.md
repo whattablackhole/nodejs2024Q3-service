@@ -1,7 +1,7 @@
 # Home Library Service
 
 ## Prerequisites
-
+- Docker - Optional
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
 
@@ -20,12 +20,34 @@ npm install
 ## Running application
 
 ```
-npm start
+npm run start:dev
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Running application via docker
+
+```
+docker compose up --build
+```
+
+After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Scanning
+### Prerequisites:
+    docker pull whattablackhole/nodejs2024q3-service-app:1.0
+    docker pull whattablackhole/nodejs2024q3-service-postgres:1.0
+```
+npm run scan
+```
+
+It runs docker scout with common vulnerabilities and exposures flags with provided images.
+
+*You can replace with your image tags if needed
 
 ## Testing
 

@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "scan": "docker scout cves whattablackhole/nodejs2024q3-service-app:1.0 && docker scout cves whattablackhole/nodejs2024q3-service-postgres:1.0",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

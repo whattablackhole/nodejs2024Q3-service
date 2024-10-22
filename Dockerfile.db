@@ -1,14 +1,1 @@
 FROM postgres:alpine3.20
-
-ENV POSTGRES_DB=musiclibdb \
-    POSTGRES_USER=postgres \
-    POSTGRES_PASSWORD=admin \
-    PGDATA=/var/lib/postgresql/data/pgdata
-
-RUN mkdir -p /var/lib/postgresql/data/pgdata \
-    && chown -R postgres:postgres /var/lib/postgresql/data/pgdata
-
-HEALTHCHECK --interval=90s --timeout=30s --start-period=30s --retries=5 \
-    CMD pg_isready -U $POSTGRES_USER || exit 1
-
-EXPOSE 5432
