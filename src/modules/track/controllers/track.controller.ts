@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TrackService } from '../services/track.service';
 import {
@@ -16,10 +17,7 @@ import {
   TrackDto,
   UpdateTrackDto,
 } from 'src/models/dtos/track';
-import {
-  EntityNotFoundException,
-  ServerErrorException,
-} from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOperation,
@@ -27,7 +25,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('track')
 @Controller('/')
 export class TrackController {

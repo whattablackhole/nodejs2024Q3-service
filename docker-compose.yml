@@ -9,6 +9,7 @@ services:
       - db-network
     environment:
       DATABASE_URL: ${DOCKER_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
       PORT: ${DOCKER_APP_PORT}
     ports:
       - "${DOCKER_APP_PORT}:${DOCKER_APP_PORT}"

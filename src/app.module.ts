@@ -6,6 +6,8 @@ import { TrackModule } from './modules/track/track.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { ArtistModule } from './modules/artist/artist.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtGlobalModule } from './modules/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -14,8 +16,14 @@ import { ArtistModule } from './modules/artist/artist.module';
     TrackModule,
     FavoritesModule,
     DatabaseModule,
+    AuthModule,
+    JwtGlobalModule,
     ArtistModule,
     RouterModule.register([
+      {
+        path: 'auth',
+        module: AuthModule,
+      },
       {
         path: 'user',
         module: UserModule,
@@ -38,7 +46,5 @@ import { ArtistModule } from './modules/artist/artist.module';
       },
     ]),
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

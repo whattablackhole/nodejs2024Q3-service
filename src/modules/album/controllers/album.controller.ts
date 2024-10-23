@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from '../services/album.service';
 import {
@@ -16,10 +17,7 @@ import {
   CreateAlbumDto,
   UpdateAlbumDto,
 } from 'src/models/dtos/album';
-import {
-  EntityNotFoundException,
-  ServerErrorException,
-} from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOperation,
@@ -27,7 +25,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('album')
 @Controller('/')
 export class AlbumController {

@@ -7,16 +7,19 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { FavoritesService } from '../services/favorites.service';
 import { FavoritesResponseDto } from 'src/models/dtos/favorites';
 import {
   EntityNotFoundException,
-  ServerErrorException,
   UnprocessableEntity,
 } from 'src/modules/common/exceptions/entity.exception';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('favs')
 @Controller('/')
 export class FavoritesController {

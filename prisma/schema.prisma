@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  login     String   @unique
-  password  String
-  version   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(uuid())
+  login        String        
+  password     String
+  version      Int
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  refreshToken RefreshToken?
 }
 
 model Track {
@@ -68,4 +69,11 @@ model FavTrack {
   id      String @id @default(uuid())
   trackId String @unique
   track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expire DateTime
 }

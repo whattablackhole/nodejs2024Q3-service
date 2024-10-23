@@ -9,15 +9,13 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto, UserDto } from 'src/models/dtos/user';
 import { UserService } from '../services/user.service';
 import { plainToInstance } from 'class-transformer';
 import { PasswordMismatchException } from '../exceptions/user.exception';
-import {
-  EntityNotFoundException,
-  ServerErrorException,
-} from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOkResponse,
@@ -26,7 +24,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('users')
 @Controller('/')
 export class UserController {
