@@ -17,7 +17,7 @@ import {
   CreateArtistDto,
   UpdateArtistDto,
 } from 'src/models/dtos/artist';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOperation,
@@ -25,7 +25,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
 import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -73,7 +72,7 @@ export class ArtistController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -104,7 +103,7 @@ export class ArtistController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -127,7 +126,7 @@ export class ArtistController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -163,7 +162,7 @@ export class ArtistController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 }

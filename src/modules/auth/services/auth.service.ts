@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { Credentials } from 'src/models/dtos/auth';
-import { ActionForbidden } from 'src/modules/common/exceptions/auth.exception';
+import { ActionForbidden } from 'src/exceptions/auth.exception';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { UserService } from 'src/modules/user/services/user.service';
 
@@ -16,7 +16,10 @@ export class AuthService {
   ) {}
 
   public async signup(credentials: Credentials) {
-    credentials.password = await hash(credentials.password, 10);
+    credentials.password = await hash(
+      credentials.password,
+      process.env.CRYPT_SALT || 10,
+    );
     const user = await this.userService.createUser(credentials);
     return user;
   }
@@ -59,7 +62,10 @@ export class AuthService {
   private generateAccessToken(user: User) {
     return this.jwtService.sign(
       { userId: user.id, login: user.login },
-      { secret: process.env.JWT_SECRET, expiresIn: '1h' },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h',
+      },
     );
   }
 

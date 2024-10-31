@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, UpdateUserDto } from 'src/models/dtos/user';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import { User } from 'src/types/user';
 import { PasswordMismatchException } from '../exceptions/user.exception';
 import { Prisma } from '@prisma/client';
@@ -10,8 +10,8 @@ import { Prisma } from '@prisma/client';
 export class UserService {
   constructor(private dbClient: DatabaseClientService) {}
 
-  async user(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
-    const user = await this.dbClient.user.findUnique({
+  async user(userWhereUniqueInput: Prisma.UserWhereInput): Promise<User> {
+    const user = await this.dbClient.user.findFirst({
       where: userWhereUniqueInput,
     });
 

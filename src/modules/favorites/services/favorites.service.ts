@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
-import { UnprocessableEntity } from 'src/modules/common/exceptions/entity.exception';
+import { UnprocessableEntity } from 'src/exceptions/entity.exception';
 import { Favorites } from 'src/types/favorites';
 import { Prisma } from '@prisma/client';
 

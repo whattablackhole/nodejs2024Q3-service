@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto, UpdateTrackDto } from 'src/models/dtos/track';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import { Track } from 'src/types/track';
 import { Prisma } from '@prisma/client';
 

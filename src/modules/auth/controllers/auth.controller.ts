@@ -10,9 +10,8 @@ import { Credentials, TokenCredentials } from 'src/models/dtos/auth';
 import { UserDto } from 'src/models/dtos/user';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../services/auth.service';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
-import { ServerErrorException } from 'src/modules/common/exceptions/server.exception';
-import { ActionForbidden } from 'src/modules/common/exceptions/auth.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
+import { ActionForbidden } from 'src/exceptions/auth.exception';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 
 @Controller('/')
@@ -48,7 +47,7 @@ export class AuthController {
         throw new ForbiddenException(err.message);
       }
 
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -67,7 +66,7 @@ export class AuthController {
         throw new ForbiddenException(err.message);
       }
 
-      throw new ServerErrorException();
+      throw err;
     }
   }
 }
