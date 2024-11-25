@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { Credentials } from 'src/models/dtos/auth';
 import { ActionForbidden } from 'src/exceptions/auth.exception';
@@ -38,9 +38,10 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
-  public async refresh(refreshToken: string) {
+
+  public async refresh(where: Prisma.RefreshTokenWhereUniqueInput) {
     const refreshTokenData = await this.dbClient.refreshToken.findUnique({
-      where: { id: refreshToken },
+      where,
       include: { user: true },
     });
 
@@ -78,9 +79,15 @@ export class AuthService {
 
       return await this.dbClient.refreshToken
         .create({
-          data: { userId: user.id, expire: expireDate },
+          data: { userId: user.id, expire: expireDate, jwtId: this.jwtService.sign(
+            { userId: user.id, login: user.login },
+            {
+              secret: process.env.JWT_SECRET,
+              expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
+            },
+          ) },
         })
-        .then((data) => data.id);
+        .then((data) => data.jwtId);
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Credentials, TokenCredentials } from 'src/models/dtos/auth';
 import { UserDto } from 'src/models/dtos/user';
@@ -53,12 +54,17 @@ export class AuthController {
 
   @Post('/refresh')
   @HttpCode(200)
-  // TODO: make as in test... Refresh token must be jwt token...
   async refresh(
-    @Body() data?: TokenCredentials,
+    @Body() data?: any,
   ): Promise<{ refreshToken: string; accessToken: string }> {
+    if (!data?.refreshToken) {
+      throw new UnauthorizedException();
+    }
+
     try {
-      const tokens = await this.authService.refresh(data.refreshToken);
+      const tokens = await this.authService.refresh({
+        jwtId: data.refreshToken,
+      });
 
       return tokens;
     } catch (err) {

@@ -73,6 +73,7 @@ model FavTrack {
 
 model RefreshToken {
   id     String @id @default(uuid())
+  jwtId  String @unique
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   expire DateTime
