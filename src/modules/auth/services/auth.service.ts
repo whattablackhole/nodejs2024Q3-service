@@ -18,7 +18,7 @@ export class AuthService {
   public async signup(credentials: Credentials) {
     credentials.password = await hash(
       credentials.password,
-      process.env.CRYPT_SALT || 10,
+      Number.parseInt(process.env.CRYPT_SALT) || 10,
     );
     const user = await this.userService.createUser(credentials);
     return user;
