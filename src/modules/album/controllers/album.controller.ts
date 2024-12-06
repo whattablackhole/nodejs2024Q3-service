@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from '../services/album.service';
 import {
@@ -16,10 +17,7 @@ import {
   CreateAlbumDto,
   UpdateAlbumDto,
 } from 'src/models/dtos/album';
-import {
-  EntityNotFoundException,
-  ServerErrorException,
-} from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOperation,
@@ -27,7 +25,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('album')
 @Controller('/')
 export class AlbumController {
@@ -43,11 +43,7 @@ export class AlbumController {
   @ApiOperation({ summary: 'Get all albums' })
   @Get()
   async findAll(): Promise<AlbumDto[]> {
-    try {
-      return await this.albumService.albums();
-    } catch {
-      throw new ServerErrorException();
-    }
+    return await this.albumService.albums();
   }
 
   @ApiResponse({ status: 404, description: 'Album not found' })
@@ -72,12 +68,12 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<AlbumDto> {
     try {
-      return await this.albumService.album(id);
+      return await this.albumService.album({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -103,12 +99,12 @@ export class AlbumController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 400 })) id: string,
   ): Promise<void> {
     try {
-      return await this.albumService.deleteAlbum(id);
+      return await this.albumService.deleteAlbum({ id });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -129,7 +125,7 @@ export class AlbumController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -157,12 +153,15 @@ export class AlbumController {
     @Body() updateAlbumDto: UpdateAlbumDto,
   ): Promise<AlbumDto> {
     try {
-      return await this.albumService.updateAlbum({ data: updateAlbumDto, id });
+      return await this.albumService.updateAlbum({
+        data: updateAlbumDto,
+        where: { id },
+      });
     } catch (err) {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 }

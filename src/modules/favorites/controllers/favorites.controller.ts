@@ -7,16 +7,18 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { FavoritesService } from '../services/favorites.service';
 import { FavoritesResponseDto } from 'src/models/dtos/favorites';
 import {
   EntityNotFoundException,
-  ServerErrorException,
   UnprocessableEntity,
-} from 'src/modules/common/exceptions/entity.exception';
+} from 'src/exceptions/entity.exception';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('favs')
 @Controller('/')
 export class FavoritesController {
@@ -32,11 +34,7 @@ export class FavoritesController {
   })
   @Get()
   async getFavs(): Promise<FavoritesResponseDto> {
-    try {
-      return await this.favoritesService.favorites();
-    } catch {
-      throw new ServerErrorException();
-    }
+    return await this.favoritesService.favorites();
   }
 
   @ApiResponse({ status: 422, description: 'The track is not processable' })
@@ -66,7 +64,7 @@ export class FavoritesController {
       if (err instanceof UnprocessableEntity) {
         throw new HttpException(err.message, 422);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -97,7 +95,7 @@ export class FavoritesController {
       if (err instanceof UnprocessableEntity) {
         throw new HttpException(err.message, 422);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -128,7 +126,7 @@ export class FavoritesController {
       if (err instanceof UnprocessableEntity) {
         throw new HttpException(err.message, 422);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -159,7 +157,7 @@ export class FavoritesController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -190,7 +188,7 @@ export class FavoritesController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -221,7 +219,7 @@ export class FavoritesController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 }

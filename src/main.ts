@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as yaml from 'js-yaml';
 import { writeFile } from 'node:fs/promises';
+import { AllExceptionsFilter } from './exceptions/exception.filter';
+import { LoggingService } from './modules/logging/logging.service';
 
 config();
 
@@ -25,6 +27,21 @@ async function bootstrap() {
     }),
   );
 
+  const loggingService = app.get(LoggingService);
+
+  process.on('uncaughtException', (err: Error) => {
+    loggingService.logUncaughtException(err);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+    loggingService.logUnhandledRejection(reason, promise);
+    process.exit(1);
+  });
+
+  app.useGlobalFilters(new AllExceptionsFilter(loggingService));
+  app.useLogger(loggingService);
+
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('doc', app, document);
@@ -38,7 +55,7 @@ async function bootstrap() {
     security: document.security,
     paths: document.paths,
     externalDocs: document.externalDocs,
-    ...document
+    ...document,
   };
 
   const yamlString = yaml.dump(rearengedDocument);
