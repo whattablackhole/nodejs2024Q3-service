@@ -1,0 +1,964 @@
+openapi: 3.0.0
+info:
+  title: Home Library Service
+  description: Home music library service
+  version: 1.0.0
+  contact: {}
+servers: []
+tags: []
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the user
+          example: 23c205ce-f1e9-4bae-9e6a-c913fe15a29a
+        createdAt:
+          format: date-time
+          type: string
+          description: Timestamp when the user was created, in milliseconds since epoch
+          example: 1729182335190
+        login:
+          type: string
+          description: The login name of the user
+          example: Pupkin
+        updatedAt:
+          format: date-time
+          type: string
+          description: >-
+            Timestamp when the user was last updated, in milliseconds since
+            epoch
+          example: 1729182335190
+        version:
+          type: number
+          description: The current version of the user record, incremented on updates
+          example: 1
+        password:
+          type: string
+          description: The user's password (excluded from response)
+          example: Strong_password
+      required:
+        - id
+        - createdAt
+        - login
+        - updatedAt
+        - version
+        - password
+    CreateUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: The login of the user, must be 3-255 characters long
+        password:
+          type: string
+          description: >-
+            The password, must be alphanumeric + underscores and 3-30 characters
+            long
+      required:
+        - login
+        - password
+    UpdateUserDto:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          description: The current password of the user
+          example: Strong_password
+        newPassword:
+          type: string
+          description: >-
+            The new password, must be alphanumeric + underscores and 3-30
+            characters long
+          example: New_Strong_password
+      required:
+        - oldPassword
+        - newPassword
+    AlbumDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the album
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          description: The name of the album
+          example: Abbey Road
+        year:
+          type: number
+          description: The year the album was released
+          example: 1969
+          minimum: 1900
+          maximum: 2100
+        artistId:
+          type: string
+          description: The UUID of the artist associated with the album
+          example: 123e4567-e89b-12d3-a456-426614174000
+      required:
+        - id
+        - name
+        - year
+        - artistId
+    CreateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the album
+          example: Abbey Road
+        year:
+          type: number
+          description: The year the album was released
+          example: 1969
+          minimum: 1900
+          maximum: 2100
+        artistId:
+          type: string
+          description: The UUID of the artist associated with the album, if any
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+      required:
+        - name
+        - year
+    UpdateAlbumDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the album
+          example: Abbey Road
+        year:
+          type: number
+          description: The year the album was released
+          example: 1969
+          minimum: 1900
+          maximum: 2100
+        artistId:
+          type: string
+          description: The UUID of the artist associated with the album, if any
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+      required:
+        - name
+        - year
+    TrackDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the track
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          description: The name of the track
+          example: Track 1
+        artistId:
+          type: string
+          description: The artist id associated with the track
+          example: 123e4567-e89b-12d3-a456-426614174000
+        albumId:
+          type: string
+          description: The album id associated with the track
+          example: 223e4567-e89b-12d3-a456-426614174001
+        duration:
+          type: number
+          description: The duration of the track in seconds
+          example: 240
+      required:
+        - id
+        - name
+        - artistId
+        - albumId
+        - duration
+    CreateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The current name of the track
+          example: Track 1
+        artistId:
+          type: string
+          description: The current artist id of the track of type UUID
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        albumId:
+          type: string
+          description: The current album id of the track of type UUID
+          example: 223e4567-e89b-12d3-a456-426614174001
+          nullable: true
+        duration:
+          type: number
+          description: The duration of the track in seconds
+          example: 240
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration
+    UpdateTrackDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The current name of the track
+          example: Track 1
+        artistId:
+          type: string
+          description: The current artist id of the track of type UUID
+          example: 123e4567-e89b-12d3-a456-426614174000
+          nullable: true
+        albumId:
+          type: string
+          description: The current album id of the track of type UUID
+          example: 223e4567-e89b-12d3-a456-426614174001
+          nullable: true
+        duration:
+          type: number
+          description: The duration of the track in seconds
+          example: 240
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration
+    ArtistDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the artist
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          description: The name of the artist
+          example: Adele
+        grammy:
+          type: boolean
+          description: Indicates if the artist has won a Grammy award
+          example: true
+      required:
+        - id
+        - name
+        - grammy
+    FavoritesResponseDto:
+      type: object
+      properties:
+        artists:
+          description: A list of favorite artists
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              name: Adele
+              grammy: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistDto'
+        albums:
+          description: A list of favorite albums
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              name: Abbey Road
+              year: 1969
+              artistId: 123e4567-e89b-12d3-a456-426614174000
+          type: array
+          items:
+            $ref: '#/components/schemas/AlbumDto'
+        tracks:
+          description: A list of favorite tracks
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              name: Imagine
+              duration: 183
+              artistId: 123e4567-e89b-12d3-a456-426614174000
+              albumId: 123e4567-e89b-12d3-a456-426614174000
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackDto'
+      required:
+        - artists
+        - albums
+        - tracks
+    Credentials:
+      type: object
+      properties: {}
+    TokenCredentials:
+      type: object
+      properties: {}
+    CreateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the artist
+          example: Adele
+        grammy:
+          type: boolean
+          description: Whether the artist has won a Grammy award
+          example: true
+      required:
+        - name
+        - grammy
+    UpdateArtistDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the artist
+          example: Adele
+        grammy:
+          type: boolean
+          description: Whether the artist has won a Grammy award
+          example: true
+      required:
+        - name
+        - grammy
+paths:
+  /user:
+    get:
+      operationId: UserController_findAll
+      summary: Get all users
+      parameters: []
+      responses:
+        '200':
+          description: The users have been successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+        '500':
+          description: Server error
+      tags: &ref_0
+        - users
+    post:
+      operationId: UserController_createOne
+      summary: Create user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: The user has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+      tags: *ref_0
+  /user/{id}:
+    get:
+      operationId: UserController_getOne
+      summary: Get user by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: id has UUID format
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The user has been successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+      tags: *ref_0
+    delete:
+      operationId: UserController_deleteOne
+      summary: Delete user by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: User id in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The user has been successfully deleted.
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+      tags: *ref_0
+    put:
+      operationId: UserController_updateOne
+      summary: Update user by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: id has UUID format
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: The user has been successfully updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '403':
+          description: Password mismatch
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+      tags: *ref_0
+  /album:
+    get:
+      operationId: AlbumController_findAll
+      summary: Get all albums
+      parameters: []
+      responses:
+        '200':
+          description: Albums have been successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlbumDto'
+        '500':
+          description: Server error
+      tags: &ref_1
+        - album
+    post:
+      operationId: AlbumController_createOne
+      summary: Create new album record
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAlbumDto'
+      responses:
+        '201':
+          description: The Album has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+        '404':
+          description: Album not found
+        '500':
+          description: Server error
+      tags: *ref_1
+  /album/{id}:
+    get:
+      operationId: AlbumController_getOne
+      summary: Get album by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The Album has been successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+        '400':
+          description: Bad request. albumId is invalid (not uuid)
+        '404':
+          description: Album not found
+        '500':
+          description: Server error
+      tags: *ref_1
+    delete:
+      operationId: AlbumController_deleteOne
+      summary: Delete album by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The Album has been successfully deleted
+        '400':
+          description: Bad request. albumId is invalid (not uuid)
+        '404':
+          description: Album not found
+        '500':
+          description: Server error
+      tags: *ref_1
+    put:
+      operationId: AlbumController_updateOne
+      summary: Update new album record by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album id has to be in UUID format
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAlbumDto'
+      responses:
+        '200':
+          description: The Album has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlbumDto'
+        '400':
+          description: Bad request. albumId is invalid (not uuid)
+        '404':
+          description: Album not found
+        '500':
+          description: Server error
+      tags: *ref_1
+  /track:
+    get:
+      operationId: TrackController_findAll
+      summary: Retrive all tracks
+      parameters: []
+      responses:
+        '200':
+          description: Tracks have been successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrackDto'
+        '500':
+          description: Server error
+      tags: &ref_2
+        - track
+    post:
+      operationId: TrackController_createOne
+      summary: Create new track record
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrackDto'
+      responses:
+        '201':
+          description: The track has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackDto'
+        '404':
+          description: Track not found
+        '500':
+          description: Server error
+      tags: *ref_2
+  /track/{id}:
+    get:
+      operationId: TrackController_getOne
+      summary: Retrive track by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The track has been successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackDto'
+        '400':
+          description: Bad request. trackId is invalid (not uuid)
+        '404':
+          description: Track not found
+        '500':
+          description: Server error
+      tags: *ref_2
+    delete:
+      operationId: TrackController_deleteOne
+      summary: Delete the track record by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The track has been successfully deleted
+        '400':
+          description: Bad request. trackId is invalid (not uuid)
+        '404':
+          description: Track not found
+        '500':
+          description: Server error
+      tags: *ref_2
+    put:
+      operationId: TrackController_updateOne
+      summary: Update track information by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track id has to be in UUID format
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTrackDto'
+      responses:
+        '200':
+          description: The track has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackDto'
+        '400':
+          description: Bad request. trackId is invalid (not uuid)
+        '404':
+          description: Track not found
+        '500':
+          description: Server error
+      tags: *ref_2
+  /favs:
+    get:
+      operationId: FavoritesController_getFavs
+      summary: Retrive collection of favorite artists, albums and tracks
+      parameters: []
+      responses:
+        '200':
+          description: The collection has been successfuly retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoritesResponseDto'
+        '500':
+          description: Server error
+      tags: &ref_3
+        - favs
+  /favs/track/{id}:
+    post:
+      operationId: FavoritesController_addFavTrack
+      summary: Add track to favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The track has been successfully added from favorites
+        '400':
+          description: Bad request. trackId is invalid (not uuid)
+        '422':
+          description: The track is not processable
+        '500':
+          description: Server error
+      tags: *ref_3
+    delete:
+      operationId: FavoritesController_deleteFavTrack
+      summary: Remove track from favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The track has been successfully removed from favorites
+        '400':
+          description: Bad request. trackId is invalid (not uuid)
+        '404':
+          description: Track not found
+        '500':
+          description: Server error
+      tags: *ref_3
+  /favs/album/{id}:
+    post:
+      operationId: FavoritesController_addFavAlbum
+      summary: Add album to favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The album has been successfully added from favorites
+        '400':
+          description: Bad request. albumId is invalid (not uuid)
+        '422':
+          description: The album is not processable
+        '500':
+          description: Server error
+      tags: *ref_3
+    delete:
+      operationId: FavoritesController_deleteFavAlbum
+      summary: Remove album from favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The album has been successfully removed from favorites
+        '400':
+          description: Bad request. albumId is invalid (not uuid)
+        '404':
+          description: Album not found
+        '500':
+          description: Server error
+      tags: *ref_3
+  /favs/artist/{id}:
+    post:
+      operationId: FavoritesController_addFavArtist
+      summary: Add artist to favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The artist has been successfully added from favorites
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '422':
+          description: The artist is not processable
+        '500':
+          description: Server error
+      tags: *ref_3
+    delete:
+      operationId: FavoritesController_deleteFavArtist
+      summary: Remove artist from favorites by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '204':
+          description: The artist has been successfully removed from favorites
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+      tags: *ref_3
+  /auth/signup:
+    post:
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '201':
+          description: ''
+  /auth/refresh:
+    get:
+      operationId: AuthController_refreshTokens
+      parameters: []
+      responses:
+        '200':
+          description: ''
+    post:
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCredentials'
+      responses:
+        '200':
+          description: ''
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: ''
+  /artist:
+    get:
+      operationId: ArtistController_findAll
+      summary: Retrieve all artist records
+      parameters: []
+      responses:
+        '200':
+          description: Artists have been successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArtistDto'
+        '500':
+          description: Server error
+      tags: &ref_4
+        - artist
+    post:
+      operationId: ArtistController_createOne
+      summary: Create new artist record
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateArtistDto'
+      responses:
+        '201':
+          description: The artist has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+      tags: *ref_4
+  /artist/{id}:
+    get:
+      operationId: ArtistController_getOne
+      summary: Retrieve artist record by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The artist has been successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+      tags: *ref_4
+    delete:
+      operationId: ArtistController_deleteOne
+      summary: Delete artist record by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist id has to be in UUID format
+          schema:
+            type: string
+      responses:
+        '201':
+          description: The artist has been successfully deleted
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+      tags: *ref_4
+    put:
+      operationId: ArtistController_updateOne
+      summary: Update artist record information by id
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist id has to be in UUID format
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArtistDto'
+      responses:
+        '200':
+          description: The artist has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistDto'
+        '400':
+          description: Bad request. artistId is invalid (not uuid)
+        '404':
+          description: Artist not found
+        '500':
+          description: Server error
+      tags: *ref_4

@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      dockerfile: Dockerfile.app
+    depends_on:
+      - postgres
+    restart: on-failure
+    networks:
+      - db-network
+    environment:
+      DATABASE_URL: ${DOCKER_DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${DOCKER_APP_PORT}
+      LOG_LEVEL: ${LOG_LEVEL}
+      MAX_LOG_FILE_SIZE: ${MAX_LOG_FILE_SIZE}
+      CRYPT_SALT: ${CRYPT_SALT}
+      TOKEN_EXPIRE_TIME: ${TOKEN_EXPIRE_TIME}
+      TOKEN_REFRESH_EXPIRE_TIME: ${TOKEN_REFRESH_EXPIRE_TIME}
+    ports:
+      - "${DOCKER_APP_PORT}:${DOCKER_APP_PORT}"
+    volumes:
+      - ./src:/app/src/
+    env_file:
+      - .env
+  postgres:
+    build: 
+      dockerfile: Dockerfile.db
+      context: .
+    environment:
+      POSTGRES_DB: ${DOCKER_POSTGRES_DB}
+      POSTGRES_USER: ${DOCKER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DOCKER_POSTGRES_PASSWORD}
+      PGDATA: ${DOCKER_PGDATA}
+    volumes:
+      - musiclibdb-data:/var/lib/postgresql/data
+      - postgres-logs:/var/log/postgresql
+    restart: on-failure
+    networks:
+      - db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DOCKER_POSTGRES_USER"]
+      interval: ${DOCKER_DATABASE_HEALTHCHECK_INTERVAL}
+      timeout: ${DOCKER_DATABASE_HEALTHCHECK_TIMEOUT}
+      retries: ${DOCKER_DATABASE_HEALTHCHECK_RETRIES}
+      start_period: ${DOCKER_DATABASE_HEALTHCHECK_START_PERIOD}
+    env_file:
+      - .env
+
+volumes:
+  musiclibdb-data:
+  postgres-logs:
+
+networks:
+  db-network:
+    driver: bridge
