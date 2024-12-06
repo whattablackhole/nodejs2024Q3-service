@@ -281,6 +281,12 @@ components:
         - artists
         - albums
         - tracks
+    Credentials:
+      type: object
+      properties: {}
+    TokenCredentials:
+      type: object
+      properties: {}
     CreateArtistDto:
       type: object
       properties:
@@ -796,6 +802,51 @@ paths:
         '500':
           description: Server error
       tags: *ref_3
+  /auth/signup:
+    post:
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '201':
+          description: ''
+  /auth/refresh:
+    get:
+      operationId: AuthController_refreshTokens
+      parameters: []
+      responses:
+        '200':
+          description: ''
+    post:
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCredentials'
+      responses:
+        '200':
+          description: ''
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Credentials'
+      responses:
+        '200':
+          description: ''
   /artist:
     get:
       operationId: ArtistController_findAll

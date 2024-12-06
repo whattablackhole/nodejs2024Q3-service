@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto, UpdateAlbumDto } from 'src/models/dtos/album';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import { Album } from 'src/types/album';
 import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';

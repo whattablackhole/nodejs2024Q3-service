@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArtistDto, UpdateArtistDto } from 'src/models/dtos/artist';
 import { DatabaseClientService } from 'src/modules/database/services/database-client.service';
 import { Artist } from 'src/types/artist';
-import { EntityNotFoundException } from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import { Prisma } from '@prisma/client';
 
 @Injectable()

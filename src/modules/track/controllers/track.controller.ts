@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TrackService } from '../services/track.service';
 import {
@@ -16,10 +17,7 @@ import {
   TrackDto,
   UpdateTrackDto,
 } from 'src/models/dtos/track';
-import {
-  EntityNotFoundException,
-  ServerErrorException,
-} from 'src/modules/common/exceptions/entity.exception';
+import { EntityNotFoundException } from 'src/exceptions/entity.exception';
 import {
   ApiBody,
   ApiOperation,
@@ -27,7 +25,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/jwt/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('track')
 @Controller('/')
 export class TrackController {
@@ -42,11 +42,7 @@ export class TrackController {
   @ApiResponse({ status: 500, description: 'Server error' })
   @Get()
   async findAll(): Promise<TrackDto[]> {
-    try {
-      return await this.trackService.tracks();
-    } catch {
-      throw new ServerErrorException();
-    }
+    return await this.trackService.tracks();
   }
 
   @ApiOperation({ summary: 'Retrive track by id' })
@@ -76,7 +72,7 @@ export class TrackController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -107,7 +103,7 @@ export class TrackController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
   @ApiOperation({ summary: 'Create new track record' })
@@ -127,7 +123,7 @@ export class TrackController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 
@@ -163,7 +159,7 @@ export class TrackController {
       if (err instanceof EntityNotFoundException) {
         throw new HttpException(err.message, 404);
       }
-      throw new ServerErrorException();
+      throw err;
     }
   }
 }
